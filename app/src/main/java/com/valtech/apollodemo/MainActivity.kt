@@ -12,9 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.valtech.apollodemo.feature.CallUiState
 import com.valtech.apollodemo.ui.HomeScreen
+import com.valtech.apollodemo.ui.InCallScreen
+import com.valtech.apollodemo.ui.IncomingCallScreen
+import com.valtech.apollodemo.ui.OutgoingCallScreen
 import com.valtech.apollodemo.ui.theme.ApolloDemoTheme
 import org.linphone.core.Core
 import org.linphone.core.Factory
@@ -38,38 +43,90 @@ class MainActivity : ComponentActivity() {
     val password4 = "Prishtina123"
     val domain4 = "sip.linphone.org"
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val viewModel = (application as MyApplication).callViewModel
+        val callUiState by viewModel.callUiState
+
         enableEdgeToEdge()
       //  val core = (applicationContext as MyApplication).linphoneCore
         setContent {
             ApolloDemoTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HomeScreen { name ->
-                        when (name) {
-                            "Alarm" -> {
-                                // user that will accept the call
-                                val address = (applicationContext as MyApplication).linphoneCore.interpretUrl("sip:liridon@sip.linphone.org")
+//                    HomeScreen { name ->
+//                        when (name) {
+//                            "Alarm" -> {
+//                                // user that will accept the call
+//                                val address = (applicationContext as MyApplication).linphoneCore.interpretUrl("sip:liridon@sip.linphone.org")
+//
+//                                val params = (applicationContext as MyApplication).linphoneCore.createCallParams(null)
+//                                //  params.enableVideo(false)
+//                                (applicationContext as MyApplication).linphoneCore.inviteAddressWithParams(address!!, params!!)
+//
+//                                println("You clicked on Alarm")
+//                            }
+//
+//                            "Messages" -> {
+//
+//                                //end the current call if any
+//                                (applicationContext as MyApplication).linphoneCore.currentCall?.terminate()
+//                                println("You clicked on Messages")
+//                            }
+//
+//                            "I'm OK" -> println("You clicked on I'm OK")
+//                            "Call Manager" -> println("You clicked on Call Manager")
+//                            "Repairs" -> println("You clicked on Repairs")
+//                            "Call a Neighbour" -> println("You clicked on Call a Neighbour")
+//                            else -> Toast.makeText(this, "Unknown button clicked", Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
 
-                                val params = (applicationContext as MyApplication).linphoneCore.createCallParams(null)
-                                //  params.enableVideo(false)
-                                (applicationContext as MyApplication).linphoneCore.inviteAddressWithParams(address!!, params!!)
+                    when (callUiState) {
+                        is CallUiState.Incoming -> {
+                            IncomingCallScreen(
+                                caller = (callUiState as CallUiState.Incoming).caller,
+                                onAccept = { viewModel.acceptIncomingCall((applicationContext as MyApplication).linphoneCore) },
+                                onDecline = { viewModel.declineCall() }
+                            )
+                        }
+                        is CallUiState.Outgoing -> {
+                            OutgoingCallScreen(
+                                callee = (callUiState as CallUiState.Outgoing).callee,
+                                onCancel = { viewModel.endCall() }
+                            )
+                        }
+                        is CallUiState.InCall -> InCallScreen(onEnd = { viewModel.endCall() })
+                        is CallUiState.Ended, CallUiState.Idle -> {
+                            HomeScreen { name ->
+                                when (name) {
+                                    "Alarm" -> {
+                                        // user that will accept the call
+                                        val address = (applicationContext as MyApplication).linphoneCore.interpretUrl("sip:malsadiku@sip.linphone.org")
 
-                                println("You clicked on Alarm")
+                                        val params = (applicationContext as MyApplication).linphoneCore.createCallParams(null)
+                                        //  params.enableVideo(false)
+                                        (applicationContext as MyApplication).linphoneCore.inviteAddressWithParams(address!!, params!!)
+
+                                        println("You clicked on Alarm")
+                                    }
+
+                                    "Messages" -> {
+
+                                        //end the current call if any
+                                        (applicationContext as MyApplication).linphoneCore.currentCall?.terminate()
+                                        println("You clicked on Messages")
+                                    }
+
+                                    "I'm OK" -> println("You clicked on I'm OK")
+                                    "Call Manager" -> println("You clicked on Call Manager")
+                                    "Repairs" -> println("You clicked on Repairs")
+                                    "Call a Neighbour" -> println("You clicked on Call a Neighbour")
+                                    else -> Toast.makeText(this, "Unknown button clicked", Toast.LENGTH_SHORT).show()
+                                }
                             }
-
-                            "Messages" -> {
-
-                                //end the current call if any
-                                (applicationContext as MyApplication).linphoneCore.currentCall?.terminate()
-                                println("You clicked on Messages")
-                            }
-
-                            "I'm OK" -> println("You clicked on I'm OK")
-                            "Call Manager" -> println("You clicked on Call Manager")
-                            "Repairs" -> println("You clicked on Repairs")
-                            "Call a Neighbour" -> println("You clicked on Call a Neighbour")
-                            else -> Toast.makeText(this, "Unknown button clicked", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -83,7 +140,7 @@ class MainActivity : ComponentActivity() {
         )
 
         requestPermissions(permissions, 0)
-        configureSipAccount((applicationContext as MyApplication).linphoneCore, username4, password4, domain4)
+        configureSipAccount((applicationContext as MyApplication).linphoneCore, username, password, domain)
     }
 
 
