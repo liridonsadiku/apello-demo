@@ -1,5 +1,7 @@
 package com.valtech.apollodemo
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -14,18 +16,55 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.valtech.apollodemo.ui.HomeScreen
 import com.valtech.apollodemo.ui.theme.ApolloDemoTheme
+import org.linphone.core.Core
+import org.linphone.core.Factory
 
 class MainActivity : ComponentActivity() {
+
+    val username = "liridon"
+    val password = "Prishtina123"
+    val domain = "sip.linphone.org"
+
+
+    val username2 = "beeapps"
+    val password2 = "Prishtina123"
+    val domain2 = "sip.linphone.org"
+
+    val username3 = "borasadiku"
+    val password3 = "Prishtina456"
+    val domain3 = "sip.linphone.org"
+
+    val username4 = "malsadiku"
+    val password4 = "Prishtina123"
+    val domain4 = "sip.linphone.org"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+      //  val core = (applicationContext as MyApplication).linphoneCore
         setContent {
             ApolloDemoTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     HomeScreen { name ->
                         when (name) {
-                            "Alarm" -> println("You clicked on Alarm")
-                            "Messages" -> println("You clicked on Messages")
+                            "Alarm" -> {
+                                // user that will accept the call
+                                val address = (applicationContext as MyApplication).linphoneCore.interpretUrl("sip:liridon@sip.linphone.org")
+
+                                val params = (applicationContext as MyApplication).linphoneCore.createCallParams(null)
+                                //  params.enableVideo(false)
+                                (applicationContext as MyApplication).linphoneCore.inviteAddressWithParams(address!!, params!!)
+
+                                println("You clicked on Alarm")
+                            }
+
+                            "Messages" -> {
+
+                                //end the current call if any
+                                (applicationContext as MyApplication).linphoneCore.currentCall?.terminate()
+                                println("You clicked on Messages")
+                            }
+
                             "I'm OK" -> println("You clicked on I'm OK")
                             "Call Manager" -> println("You clicked on Call Manager")
                             "Repairs" -> println("You clicked on Repairs")
@@ -36,6 +75,32 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        val permissions = arrayOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA,
+            Manifest.permission.INTERNET
+        )
+
+        requestPermissions(permissions, 0)
+        configureSipAccount((applicationContext as MyApplication).linphoneCore, username4, password4, domain4)
+    }
+
+
+    //current user that will make the call
+    private fun configureSipAccount(core: Core, username: String, password: String, domain: String) {
+        val factory = Factory.instance()
+        val authInfo = factory.createAuthInfo(username, null, password, null, null, domain)
+        core.addAuthInfo(authInfo)
+
+        val proxyCfg = core.createProxyConfig()
+        val identity = factory.createAddress("sip:$username@$domain")
+        proxyCfg.identityAddress = identity
+        proxyCfg.serverAddr = "sip:$domain"
+        proxyCfg.isRegisterEnabled = true
+
+        core.addProxyConfig(proxyCfg)
+        core.defaultProxyConfig = proxyCfg
     }
 }
 

@@ -103,4 +103,9 @@ dependencies {
 
     //.............................................................................................
     debugImplementation(libs.leakcanary.android) // 🛠️ LeakCanary - Detect Memory Leaks
+
+    implementation(libs.linphone)
+    implementation(libs.androidx.media)
+
+
 }

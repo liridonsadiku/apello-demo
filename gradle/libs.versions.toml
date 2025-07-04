@@ -28,9 +28,14 @@ navigationTesting = "2.8.7"  # 🧪 Navigation Testing
 materialIconsExtended = "1.7.8"  # 🎨 Extended Material Icons
 ksp = "2.1.0-1.0.29"  # 🔧 Kotlin Symbol Processing (KSP)
 
+linphone = "5.4.+"
+androidx-media = "1.2.0"
+
+
 [libraries]
 # Core Dependencies
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-media = { group = "androidx.media", name = "media", version.ref = "androidx-media" }
 
 # UI & Jetpack Compose
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
@@ -73,7 +78,11 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 
+linphone = { group = "org.linphone", name = "linphone-sdk-android", version.ref = "linphone" }
+
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
