@@ -26,8 +26,8 @@ import org.linphone.core.Factory
 
 class MainActivity : ComponentActivity() {
 
-    val username = "liridon"
-    val password = "Prishtina123"
+    val username = "robertss2"
+    val password = "AppelloTest"
     val domain = "sip.linphone.org"
 
 
@@ -104,7 +104,7 @@ class MainActivity : ComponentActivity() {
                                 when (name) {
                                     "Alarm" -> {
                                         // user that will accept the call
-                                        val address = (applicationContext as MyApplication).linphoneCore.interpretUrl("sip:malsadiku@sip.linphone.org")
+                                        val address = (applicationContext as MyApplication).linphoneCore.interpretUrl("sip:robertss@sip.linphone.org")
 
                                         val params = (applicationContext as MyApplication).linphoneCore.createCallParams(null)
                                         //  params.enableVideo(false)
