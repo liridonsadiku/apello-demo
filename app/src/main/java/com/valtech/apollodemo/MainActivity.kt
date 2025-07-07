@@ -3,6 +3,7 @@ package com.valtech.apollodemo
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,8 +27,8 @@ import org.linphone.core.Factory
 
 class MainActivity : ComponentActivity() {
 
-    val username = "liridon"
-    val password = "Prishtina123"
+    val username = "robertss"
+    val password = "AppelloTest"
     val domain = "sip.linphone.org"
 
 
@@ -50,6 +51,8 @@ class MainActivity : ComponentActivity() {
 
         val viewModel = (application as MyApplication).callViewModel
         val callUiState by viewModel.callUiState
+
+        startLockTask()
 
         enableEdgeToEdge()
       //  val core = (applicationContext as MyApplication).linphoneCore
@@ -98,16 +101,16 @@ class MainActivity : ComponentActivity() {
                                 onCancel = { viewModel.endCall() }
                             )
                         }
-                        is CallUiState.InCall -> InCallScreen(onEnd = { viewModel.endCall() })
+                        is CallUiState.InCall -> InCallScreen(core = (applicationContext as MyApplication).linphoneCore, onEnd = { viewModel.endCall() })
                         is CallUiState.Ended, CallUiState.Idle -> {
                             HomeScreen { name ->
                                 when (name) {
                                     "Alarm" -> {
                                         // user that will accept the call
-                                        val address = (applicationContext as MyApplication).linphoneCore.interpretUrl("sip:malsadiku@sip.linphone.org")
+                                        val address = (applicationContext as MyApplication).linphoneCore.interpretUrl("sip:robertss2@sip.linphone.org")
 
                                         val params = (applicationContext as MyApplication).linphoneCore.createCallParams(null)
-                                        //  params.enableVideo(false)
+                                        params?.isVideoEnabled = true
                                         (applicationContext as MyApplication).linphoneCore.inviteAddressWithParams(address!!, params!!)
 
                                         println("You clicked on Alarm")
@@ -143,6 +146,15 @@ class MainActivity : ComponentActivity() {
         configureSipAccount((applicationContext as MyApplication).linphoneCore, username, password, domain)
     }
 
+    override fun onResume() {
+        super.onResume()
+        window.decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                    View.SYSTEM_UI_FLAG_FULLSCREEN
+
+    }
+
 
     //current user that will make the call
     private fun configureSipAccount(core: Core, username: String, password: String, domain: String) {
@@ -158,6 +170,9 @@ class MainActivity : ComponentActivity() {
 
         core.addProxyConfig(proxyCfg)
         core.defaultProxyConfig = proxyCfg
+        core.isVideoCaptureEnabled = true
+        core.isVideoDisplayEnabled = true
+//        core.usePreviewWindow(true)
     }
 }
 

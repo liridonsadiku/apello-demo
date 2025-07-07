@@ -48,7 +48,7 @@ class CallViewModel @Inject constructor() : ViewModel() {
     fun acceptIncomingCall(core: Core) {
         currentCall?.let {
             val params = core.createCallParams(it)
-            //  params.enableVideo(false)
+            params?.isVideoEnabled = true
             it.acceptWithParams(params)
         }
     }
