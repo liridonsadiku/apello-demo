@@ -4,16 +4,18 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.valtech.apollodemo.feature.CallUiState
@@ -21,6 +23,7 @@ import com.valtech.apollodemo.ui.HomeScreen
 import com.valtech.apollodemo.ui.InCallScreen
 import com.valtech.apollodemo.ui.IncomingCallScreen
 import com.valtech.apollodemo.ui.OutgoingCallScreen
+import com.valtech.apollodemo.ui.dailycheckin.DailyCheckInDialog
 import com.valtech.apollodemo.ui.theme.ApolloDemoTheme
 import org.linphone.core.Core
 import org.linphone.core.Factory
@@ -30,7 +33,6 @@ class MainActivity : ComponentActivity() {
     val username = "robertss"
     val password = "AppelloTest"
     val domain = "sip.linphone.org"
-
 
     val username2 = "liridon"
     val password2 = "Prishtina123"
@@ -46,10 +48,9 @@ class MainActivity : ComponentActivity() {
 
     val receiverUsername = "malsadiku" // user that will receive the call
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         val viewModel = (application as MyApplication).callViewModel
         val callUiState by viewModel.callUiState
@@ -59,8 +60,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         val core = (applicationContext as MyApplication).linphoneCore
         setContent {
+            var showDialog by remember { mutableStateOf(false) }
+
             ApolloDemoTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+
+                    if (showDialog) {
+                        DailyCheckInDialog(onDismiss = { showDialog = false })
+                    }
+
                     when (callUiState) {
                         is CallUiState.Incoming -> {
                             IncomingCallScreen(
@@ -69,14 +77,17 @@ class MainActivity : ComponentActivity() {
                                 onDecline = { viewModel.declineCall() }
                             )
                         }
+
                         is CallUiState.Outgoing -> {
                             OutgoingCallScreen(
                                 callee = (callUiState as CallUiState.Outgoing).callee,
                                 onCancel = { viewModel.endCall() }
                             )
                         }
+
                         is CallUiState.InCall -> InCallScreen(core = core, onEnd = { viewModel.endCall() })
                         is CallUiState.Ended, CallUiState.Idle -> {
+
                             HomeScreen { name ->
                                 when (name) {
                                     "Alarm" -> {
@@ -94,7 +105,8 @@ class MainActivity : ComponentActivity() {
                                         println("You clicked on Messages")
                                     }
 
-                                    "I'm OK" -> println("You clicked on I'm OK")
+                                    "I'm OK" -> showDialog = true
+
                                     "Call Manager" -> println("You clicked on Call Manager")
                                     "Repairs" -> println("You clicked on Repairs")
                                     "Call a Neighbour" -> println("You clicked on Call a Neighbour")
@@ -121,11 +133,10 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                    View.SYSTEM_UI_FLAG_FULLSCREEN
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_FULLSCREEN
 
     }
-
 
     //current user that will make the call
     private fun configureSipAccountCaller(core: Core, username: String, password: String, domain: String) {
@@ -143,7 +154,7 @@ class MainActivity : ComponentActivity() {
         core.defaultProxyConfig = proxyCfg
         core.isVideoCaptureEnabled = true
         core.isVideoDisplayEnabled = true
-//        core.usePreviewWindow(true)
+        //        core.usePreviewWindow(true)
     }
 }
 
