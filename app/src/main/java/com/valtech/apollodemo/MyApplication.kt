@@ -7,6 +7,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import com.valtech.apollodemo.feature.CallViewModel
 import dagger.hilt.android.HiltAndroidApp
 import java.util.Timer
@@ -50,12 +51,19 @@ class MyApplication : Application() {
             }
         }, 0, 20)
 
-//        uncomment this only when you've set your device as device owner with the following adb command:
-//        adb shell dpm set-device-owner com.valtech.apollodemo/.MyDeviceAdminReceiver
+        // after first app install you need to run this command, then kill the app and run it again and Kiosk mode will be active
+        // adb shell dpm set-device-owner com.valtech.apollodemo/.MyDeviceAdminReceiver
+        // to kill the Kiosk mode you need to run this command
+        // adb shell dpm remove-active-admin com.valtech.apollodemo/.MyDeviceAdminReceiver
 
-//        val adminComponentName = ComponentName(this, MyDeviceAdminReceiver::class.java)
-//        val devicePolicyManager = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-//        devicePolicyManager.setLockTaskPackages(adminComponentName, arrayOf(packageName))
+        val adminComponentName = ComponentName(this, MyDeviceAdminReceiver::class.java)
+        val devicePolicyManager = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        if (devicePolicyManager.isDeviceOwnerApp(packageName)) {
+            devicePolicyManager.setLockTaskPackages(adminComponentName, arrayOf(packageName))
+            Toast.makeText(this, "Kiosk mode initialized", Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(this, "App is not device owner. Kiosk mode not enabled.", Toast.LENGTH_LONG).show()
+        }
 
         // Add CoreListener
         coreListener = object : CoreListenerStub() {
