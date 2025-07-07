@@ -2,9 +2,6 @@ package com.valtech.apollodemo
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.valtech.apollodemo.feature.CallViewModel
@@ -64,69 +61,9 @@ class MyApplication : Application() {
             }
 
             override fun onRegistrationStateChanged(core: Core, proxyConfig: ProxyConfig, state: RegistrationState?, message: String) {
-                Log.d("REGISTRATION", "lriidon State: $state - $message")
+                Log.d("aa22aa", "onRegistrationStateChanged State: $state - $message")
             }
         }
-//        coreListener = object : CoreListenerStub() {
-//            override fun onCallStateChanged(core: Core, call: Call, state: Call.State?, message: String) {
-//                Log.d("CALL", "Call state changed: $state - $message")
-//                when (state) {
-//                    Call.State.IncomingReceived -> {
-//                        //                        val params = core.createCallParams(call)
-//                        //                        //  params.enableVideo(false)
-//                        //                        call.acceptWithParams(params)
-//                        println("liridon state IncomingReceived")
-//
-//                    }
-//
-//                    Call.State.End -> {
-//                        println("liridon state End")
-//                    }
-//
-//                    Call.State.StreamsRunning -> {
-//                        println("liridon state StreamsRunning")
-//                    }
-//
-//                    Call.State.Error -> {
-//                        println("liridon state Error: $message")
-//                    }
-//
-//                    Call.State.OutgoingInit -> {
-//                        println("liridon state OutgoingInit")
-//                    }
-//
-//                    Call.State.OutgoingProgress -> {
-//                        println("liridon state OutgoingProgress")
-//                    }
-//
-//                    //                    Call.State.Idle -> TODO()
-//                    //                    Call.State.PushIncomingReceived -> TODO()
-//                    //                    Call.State.OutgoingRinging -> TODO()
-//                    //                    Call.State.OutgoingEarlyMedia -> TODO()
-//                    //                    Call.State.Connected -> TODO()
-//                    //                    Call.State.Pausing -> TODO()
-//                    //                    Call.State.Paused -> TODO()
-//                    //                    Call.State.Resuming -> TODO()
-//                    //                    Call.State.Referred -> TODO()
-//                    //                    Call.State.PausedByRemote -> TODO()
-//                    //                    Call.State.UpdatedByRemote -> TODO()
-//                    //                    Call.State.IncomingEarlyMedia -> TODO()
-//                    //                    Call.State.Updating -> TODO()
-//                    //                    Call.State.Released -> TODO()
-//                    //                    Call.State.EarlyUpdatedByRemote -> TODO()
-//                    //                    Call.State.EarlyUpdating -> TODO()
-//                    null -> TODO()
-//                    else -> {
-//                        println("liridon state ELSE block: $state")
-//                    }
-//                }
-//            }
-//
-//            @Deprecated("Deprecated in Java")
-//            override fun onRegistrationStateChanged(core: Core, proxyConfig: ProxyConfig, state: RegistrationState?, message: String) {
-//                Log.d("REGISTRATION", " liridon State: $state - $message")
-//            }
-//        }
         linphoneCore.addListener(coreListener)
     }
 
