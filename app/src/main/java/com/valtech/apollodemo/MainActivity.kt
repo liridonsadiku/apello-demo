@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
         val viewModel = (application as MyApplication).callViewModel
         val callUiState by viewModel.callUiState
 
-        startLockTask()
+//        startLockTask()
 
         enableEdgeToEdge()
         val core = (applicationContext as MyApplication).linphoneCore
