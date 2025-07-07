@@ -1,6 +1,10 @@
 package com.valtech.apollodemo
 
+import android.annotation.SuppressLint
 import android.app.Application
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.valtech.apollodemo.feature.CallViewModel
@@ -24,6 +28,7 @@ class MyApplication : Application() {
     lateinit var callViewModel: CallViewModel
 
 
+    @SuppressLint("ServiceCast")
     override fun onCreate() {
         super.onCreate()
         // Initialize your app here if needed
@@ -44,6 +49,13 @@ class MyApplication : Application() {
                 linphoneCore.iterate()
             }
         }, 0, 20)
+
+//        uncomment this only when you've set your device as device owner with the following adb command:
+//        adb shell dpm set-device-owner com.valtech.apollodemo/.MyDeviceAdminReceiver
+
+//        val adminComponentName = ComponentName(this, MyDeviceAdminReceiver::class.java)
+//        val devicePolicyManager = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+//        devicePolicyManager.setLockTaskPackages(adminComponentName, arrayOf(packageName))
 
         // Add CoreListener
         coreListener = object : CoreListenerStub() {
