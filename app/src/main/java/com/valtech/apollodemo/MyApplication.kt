@@ -2,6 +2,9 @@ package com.valtech.apollodemo
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
